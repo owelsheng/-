@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>完整网页制作工具</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #e9ecef;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        header {
+            background: linear-gradient(to right, #007BFF, #0056b3);
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+        main {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        h2 {
+            margin-top: 20px;
+            font-weight: 600;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .input-group input,
+        .input-group textarea,
+        .input-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus,
+        .input-group textarea:focus,
+        .input-group select:focus {
+            border-color: #007BFF;
+            outline: none;
+        }
+
+        button {
+            background: #28A745;
+            color: #ffffff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        button:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: auto;
+            white-space: pre-wrap;
+        }
+
+        .divider {
+            margin: 20px 0;
+            border-top: 1px solid #ccc;
+        }
+
+        .webpage-preview {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+
+        .webpage-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .webpage-list li {
+            margin: 10px 0;
+            padding: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .webpage-list button {
+            background: #dc3545;
+        }
+
+        .search-bar {
+            margin: 10px 0;
+        }
+
+        .help-doc {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            margin-top: 10px;
+        }
+
+        @media only screen and (max-width: 600px) {
+            header h1 {
+                font-size: 2rem;
+            }
+
+            main {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1><i class="fas fa-code"></i> 完整网页制作工具</h1>
+</header>
+
+<main>
+    <div class="input-group search-bar">
+        <label for="search">搜索网页</label>
+        <input type="text" id="search" placeholder="输入搜索内容..." oninput="filterWebpages()">
+    </div>
+    
+    <div class="input-group">
+        <label for="pageTitle">网页标题</label>
+        <input type="text" id="pageTitle" placeholder="输入网页标题">
+    </div>
+
+    <div class="input-group">
+        <label for="pageContent">网页内容</label>
+        <textarea id="pageContent" rows="5" placeholder="输入网页内容"></textarea>
+    </div>
+
+    <div class="input-group">
+        <label for="pageDescription">描述</label>
+        <textarea id="pageDescription" rows="3" placeholder="输入描述内容"></textarea>
+    </div>
+
+    <div class="input-group">
+        <label for="linkText">链接文本</label>
+        <input type="text" id="linkText" placeholder="输入链接文本">
+    </div>
+
+    <div class="input-group">
+        <label for="linkUrl">链接地址</label>
+        <input type="url" id="linkUrl" placeholder="输入链接地址">
+    </div>
+
+    <div class="input-group">
+        <label for="textColor">文本颜色</label>
+        <input type="color" id="textColor" value="#000000">
+    </div>
+
+    <div class="input-group">
+        <label for="dynamicContent">动态内容</label>
+        <input type="text" id="dynamicContent" placeholder="输入动态内容">
+    </div>
+    
+    <div class="input-group">
+        <label for="imageUpload">上传图像</label>
+        <input type="file" id="imageUpload" accept="image/*" onchange="previewImage(event)">
+        <img id="imagePreview" src="" alt="Image Preview" style="display:none;" />
+    </div>
+
+    <button id="addPageBtn">添加网页</button>
+
+    <div class="divider"></div>
+
+    <h2>已创建的网页预览</h2>
+    <ul id="webpageContainer" class="webpage-list"></ul>
+
+    <div class="divider"></div>
+
+    <h2>生成的代码</h2>
+    <pre id="outputCode"></pre>
+
+    <div class="help-doc">
+        <h3>帮助文档</h3>
+        <p>使用此工具，您可以创建和管理网页：</p>
+        <ul>
+            <li>输入网页标题、内容和描述。</li>
+            <li>您可以添加链接和自定义文本颜色。</li>
+            <li>上传图片以嵌入图像内容。</li>
+            <li>在“已创建的网页预览”部分查看您的网页，并在底部获取HTML代码。</li>
+            <li>通过搜索框来查找已创建的网页。</li>
+            <li>可选：更换主题风格以满足不同的审美需求。</li>
+        </ul>
+    </div>
+</main>
+
+<script>
+    const webpages = [];
+
+    document.getElementById('addPageBtn').addEventListener('click', function () {
+        const title = document.getElementById('pageTitle').value;
+        const content = document.getElementById('pageContent').value;
+        const description = document.getElementById('pageDescription').value;
+        const linkText = document.getElementById('linkText').value;
+        const linkUrl = document.getElementById('linkUrl').value;
+        const textColor = document.getElementById('textColor').value;
+        const dynamicContent = document.getElementById('dynamicContent').value;
+        const image = document.getElementById("imagePreview").src;
+
+        if (!title || !content) {
+            alert("网页标题和内容不能为空。");
+            return;
+        }
+
+        // 创建网页对象
+        const webpage = {
+            title,
+            content,
+            description,
+            linkText,
+            linkUrl,
+            textColor,
+            dynamicContent: dynamicContent || "(无动态内容)",
+            image
+        };
+
+        // 存储网页
+        webpages.push(webpage);
+        renderWebpageList();
+        clearInputs();
+    });
+
+    function renderWebpageList() {
+        const container = document.getElementById('webpageContainer');
+        container.innerHTML = '';
+
+        webpages.forEach((webpage, index) => {
+            const linkHtml = webpage.linkUrl ? `<a href="${webpage.linkUrl}" target="_blank">${webpage.linkText}</a>` : '';
+            const webpageHtml = `
+                <div class="webpage-preview" style="color: ${webpage.textColor};">
+                    <h2>${webpage.title}</h2>
+                    <p>${webpage.content}</p>
+                    <p><em>${webpage.description}</em></p>
+                    <p>${linkHtml}</p>
+                    <p><strong>动态内容: </strong>${webpage.dynamicContent}</p>
+                    ${webpage.image ? `<img src="${webpage.image}" alt="上传的图像" />` : ''}
+                </div>
+            `;
+            const webpageItem = document.createElement('li');
+            webpageItem.innerHTML = `
+                ${webpageHtml}
+                <button onclick="removeWebpage(${index})"><i class="fas fa-trash-alt"></i> 删除</button>
+            `;
+            container.appendChild(webpageItem);
+        });
+
+        updateOutputCode();
+    }
+
+    function filterWebpages() {
+        const searchStr = document.getElementById('search').value.toLowerCase();
+        const container = document.getElementById('webpageContainer');
+        container.innerHTML = '';
+
+        webpages.forEach((webpage, index) => {
+            if (webpage.title.toLowerCase().includes(searchStr)) {
+                const linkHtml = webpage.linkUrl ? `<a href="${webpage.linkUrl}" target="_blank">${webpage.linkText}</a>` : '';
+                const webpageHtml = `
+                    <div class="webpage-preview" style="color: ${webpage.textColor};">
+                        <h2>${webpage.title}</h2>
+                        <p>${webpage.content}</p>
+                        <p><em>${webpage.description}</em></p>
+                        <p>${linkHtml}</p>
+                        <p><strong>动态内容: </strong>${webpage.dynamicContent}</p>
+                        ${webpage.image ? `<img src="${webpage.image}" alt="上传的图像" />` : ''}
+                    </div>
+                `;
+                const webpageItem = document.createElement('li');
+                webpageItem.innerHTML = `
+                    ${webpageHtml}
+                    <button onclick="removeWebpage(${index})"><i class="fas fa-trash-alt"></i> 删除</button>
+                `;
+                container.appendChild(webpageItem);
+            }
+        });
+
+        updateOutputCode();
+    }
+
+    function removeWebpage(index) {
+        webpages.splice(index, 1);
+        renderWebpageList();
+    }
+
+    function updateOutputCode() {
+        let output = webpages.map(webpage => `
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${webpage.title}</title>
+    <style>
+        body { font-family: 'Roboto', sans-serif; background-color: #f4f4f4; color: ${webpage.textColor}; }
+        main { max-width: 800px; margin: 20px auto; padding: 20px; }
+    </style>
+</head>
+<body>
+    <main>
+        <h1>${webpage.title}</h1>
+        <p>${webpage.content}</p>
+        <p><em>${webpage.description}</em></p>
+        <p>${webpage.linkUrl ? `<a href="${webpage.linkUrl}" target="_blank">${webpage.linkText}</a>` : ''}</p>
+        <p><strong>动态内容: </strong>${webpage.dynamicContent}</p>
+        ${webpage.image ? `<img src="${webpage.image}" alt="上传的图像" style="max-width: 100%; height: auto;" />` : ''}
+    </main>
+</body>
+</html>
+        `.trim()).join('\n\n');
+
+        document.getElementById('outputCode').textContent = output;
+    }
+
+    function clearInputs() {
+        document.getElementById('pageTitle').value = '';
+        document.getElementById('pageContent').value = '';
+        document.getElementById('pageDescription').value = '';
+        document.getElementById('linkText').value = '';
+        document.getElementById('linkUrl').value = '';
+        document.getElementById('textColor').value = '#000000';
+        document.getElementById('dynamicContent').value = '';
+        document.getElementById("imagePreview").src = '';
+        document.getElementById("imagePreview").style.display = 'none';
+    }
+
+    function previewImage(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const img = document.getElementById("imagePreview");
+                img.src = e.target.result;
+                img.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+</script>
+
+</body>
+
+</html>
